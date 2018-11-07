@@ -68,7 +68,12 @@ void HttpRequest::httpFinished()
     const QVariant redirectionTarget =
             reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
-    data = QString(reply->readAll());
+    QString contentType = reply->rawHeader("Content-Type");
+    if (contentType.contains("windows-1251")) {
+        data = QString::fromLocal8Bit(reply->readAll());
+    } else {
+        data = QString(reply->readAll());
+    }
 
     reply->deleteLater();
     reply = Q_NULLPTR;
