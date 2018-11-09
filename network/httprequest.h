@@ -27,7 +27,7 @@ signals:
 
 public:
     HttpRequest();
-    ~HttpRequest();
+    ~HttpRequest() { }
 
     QString get(const QUrl &url);
     QString post(const QUrl &url, const QMap<QString, QString> &params);

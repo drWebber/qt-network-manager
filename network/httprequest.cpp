@@ -20,6 +20,9 @@ QString HttpRequest::get(const QUrl &url)
     startGetRequest(url);
     waitForReply();
 
+    disconnect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
+    delete reply;
+
     return data;
 }
 
@@ -54,14 +57,15 @@ void HttpRequest::waitForReply()
     QEventLoop loop;
     connect(this,  SIGNAL(replyFinished()), &loop, SLOT(quit()));
     loop.exec();
+
+    disconnect(this,  SIGNAL(replyFinished()), &loop, SLOT(quit()));
 }
 
 void HttpRequest::httpFinished()
 {
     if (reply->error()) {
         qDebug() << "reply error";
-        reply->deleteLater();
-        reply = Q_NULLPTR;
+//        reply->deleteLater();
         return;
     }
 
@@ -75,8 +79,7 @@ void HttpRequest::httpFinished()
         data = QString(reply->readAll());
     }
 
-    reply->deleteLater();
-    reply = Q_NULLPTR;
+//    reply->deleteLater();
 
     if (!redirectionTarget.isNull()) {
         qDebug() << "redirecting";
@@ -86,9 +89,4 @@ void HttpRequest::httpFinished()
     }
 
     emit replyFinished();
-}
-
-HttpRequest::~HttpRequest()
-{
-    delete reply;
 }
