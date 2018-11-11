@@ -64,7 +64,8 @@ void HttpRequest::waitForReply()
 void HttpRequest::httpFinished()
 {
     if (reply->error()) {
-        qDebug() << "reply error";
+        qDebug() << "reply error";        
+        emit replyFinished();
 //        reply->deleteLater();
         return;
     }
