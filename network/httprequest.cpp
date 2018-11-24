@@ -26,6 +26,11 @@ QString HttpRequest::get(const QUrl &url)
     return response;
 }
 
+QString HttpRequest::get(const QString &url)
+{
+    return get(QUrl(url));
+}
+
 QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
 {
     QUrlQuery postData;
@@ -42,6 +47,12 @@ QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
     waitForReply();
 
     return response;
+}
+
+QString HttpRequest::post(const QString &url,
+                          const QMap<QString, QString> &params)
+{
+    return post(QUrl(url), params);
 }
 
 void HttpRequest::startGetRequest(const QUrl &url)
