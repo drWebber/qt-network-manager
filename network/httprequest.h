@@ -13,7 +13,8 @@ private:
     QUrl url;
     QNetworkReply *reply;
     QNetworkRequest request;
-    QString data;
+    QString response;
+    QByteArray byteResponse;
 
 private:
     void waitForReply();
@@ -31,6 +32,8 @@ public:
 
     QString get(const QUrl &url);
     QString post(const QUrl &url, const QMap<QString, QString> &params);
+
+    QByteArray getByteResponse() const;
 };
 
 #endif // HTTPREQUEST_H

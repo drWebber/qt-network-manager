@@ -23,7 +23,7 @@ QString HttpRequest::get(const QUrl &url)
     disconnect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
     delete reply;
 
-    return data;
+    return response;
 }
 
 QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
@@ -41,7 +41,7 @@ QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
 
     waitForReply();
 
-    return data;
+    return response;
 }
 
 void HttpRequest::startGetRequest(const QUrl &url)
@@ -50,6 +50,11 @@ void HttpRequest::startGetRequest(const QUrl &url)
 
     reply = manager.get(request);
     connect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
+}
+
+QByteArray HttpRequest::getByteResponse() const
+{
+    return byteResponse;
 }
 
 void HttpRequest::waitForReply()
@@ -74,10 +79,11 @@ void HttpRequest::httpFinished()
             reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     QString contentType = reply->rawHeader("Content-Type");
+    byteResponse = reply->readAll();
     if (contentType.contains("windows-1251")) {
-        data = QString::fromLocal8Bit(reply->readAll());
+        response = QString::fromLocal8Bit(byteResponse);
     } else {
-        data = QString(reply->readAll());
+        response = QString(byteResponse);
     }
 
 //    reply->deleteLater();
