@@ -1,5 +1,7 @@
-<h3>Info about client:</h3>
 <?php
+if(!isset($_COOKIE["Test"])){
+	setcookie("Test", "HELLO", 0, '/');
+}	
 echo '$_SERVER[HTTP_CONNECTION] = ' . $_SERVER ['HTTP_CONNECTION'] . "<br />";
 echo '$_SERVER[HTTP_PROXY_CONNECTION] = ' . $_SERVER ['HTTP_PROXY_CONNECTION'] . "<br />";
 echo '$_SERVER[HTTP_CACHE_CONTROL] = ' . $_SERVER ['HTTP_CACHE_CONTROL'] . "<br />";
@@ -19,7 +21,8 @@ echo '<h3>$_COOKIE:</h3>';
 print_r ( $_COOKIE );
 
 ?>
-
+<title>Aloha user</title>
+<h3>Info about client:</h3>
 <h3>FORM</h3>
 <form action="index.php" method="post">
 	<br>Name: <input type="text" name="name">

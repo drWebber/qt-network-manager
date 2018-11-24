@@ -51,6 +51,20 @@ QString HttpRequest::post(const QString &url,
     return post(QUrl(url), postData);
 }
 
+QList<QNetworkCookie> HttpRequest::getCookies()
+{
+//    QVariant cookieVar = reply->header(QNetworkRequest::CookieHeader);
+//    if (cookieVar.isValid()) {
+//        cookies = cookieVar.value<QList<QNetworkCookie>>();
+//    }
+    return cookies;
+}
+
+void HttpRequest::setCookies(QNetworkCookieJar *jar)
+{
+    manager.setCookieJar(jar);
+}
+
 void HttpRequest::startGetRequest(const QUrl &url)
 {
     request.setUrl(url);
@@ -78,7 +92,6 @@ void HttpRequest::httpFinished()
     if (reply->error()) {
         qDebug() << "reply error";        
         emit replyFinished();
-//        reply->deleteLater();
         return;
     }
 
@@ -86,14 +99,19 @@ void HttpRequest::httpFinished()
             reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     QString contentType = reply->rawHeader("Content-Type");
+
+    QVariant cookieVar = reply->header(QNetworkRequest::SetCookieHeader);
+    if (cookieVar.isValid()) {
+        cookies.append(cookieVar.value<QList<QNetworkCookie>>());
+    }
+
     byteResponse = reply->readAll();
+
     if (contentType.contains("windows-1251")) {
         response = QString::fromLocal8Bit(byteResponse);
     } else {
         response = QString(byteResponse);
     }
-
-//    reply->deleteLater();
 
     if (!redirectionTarget.isNull()) {
         qDebug() << "redirecting";

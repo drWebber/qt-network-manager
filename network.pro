@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     network/httprequest.cpp \
-    test/test.cpp
+    test/test.cpp \
+    network/cookiejar.cpp
 
 HEADERS += \
         mainwindow.h \
     network/httprequest.h \
-    test/test.h
+    test/test.h \
+    network/cookiejar.h
 
 FORMS += \
         mainwindow.ui

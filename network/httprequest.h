@@ -4,6 +4,7 @@
 #include <qurl.h>
 
 #include <QtNetwork/qnetworkreply.h>
+#include <QNetworkCookie>
 
 class HttpRequest : public QObject
 {
@@ -15,6 +16,7 @@ private:
     QNetworkRequest request;
     QString response;
     QByteArray byteResponse;
+    QList<QNetworkCookie> cookies;
 
 private:
     void waitForReply();
@@ -35,6 +37,9 @@ public:
 
     QString post(const QUrl &url, const QUrlQuery &postData);
     QString post(const QString &url, const QUrlQuery &postData);
+
+    QList<QNetworkCookie> getCookies();
+    void setCookies(QNetworkCookieJar *jar);
 
     QByteArray getByteResponse() const;
 };
