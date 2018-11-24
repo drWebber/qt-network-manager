@@ -33,8 +33,8 @@ public:
     QString get(const QUrl &url);
     QString get(const QString &url);
 
-    QString post(const QUrl &url, const QMap<QString, QString> &params);
-    QString post(const QString &url, const QMap<QString, QString> &params);
+    QString post(const QUrl &url, const QUrlQuery &postData);
+    QString post(const QString &url, const QUrlQuery &postData);
 
     QByteArray getByteResponse() const;
 };

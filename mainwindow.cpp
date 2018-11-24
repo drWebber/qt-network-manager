@@ -5,6 +5,7 @@
 #include <test/test.h>
 
 #include <qdebug.h>
+#include <qurlquery.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     HttpRequest req;
-    QMap<QString, QString> params;
-    params.insert("name", "Vasya");
-    params.insert("email", "ass@hole.com");
+    QUrlQuery postData;
+    postData.addQueryItem("name", "Vasya");
+    postData.addQueryItem("email", "ass@hole.com");
 
     QString response = req.post(
                 QUrl("https://drwebber-dev.000webhostapp.com/index.php"),
-                params
+                postData
     );
 
     ui->textBrowser->setText(response);

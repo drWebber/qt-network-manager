@@ -1,6 +1,7 @@
 #include "test.h"
 
 #include <qdebug.h>
+#include <qurlquery.h>
 
 Test::Test()
 {
@@ -26,9 +27,12 @@ void Test::testPostRequest()
     params.insert("name", "Vasya");
     params.insert("email", "ass@hole.com");
 
+    QUrlQuery postData;
+    postData.addQueryItem("name", "Vasya");
+    postData.addQueryItem("email", "ass@hole.com");
     QString response = req.post(
         QUrl("https://drwebber-dev.000webhostapp.com/index.php"),
-        params
+        postData
     );
 
     if (!response.isEmpty() && response.contains("Welcome Vasya")) {

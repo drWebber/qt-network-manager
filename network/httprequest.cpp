@@ -31,17 +31,13 @@ QString HttpRequest::get(const QString &url)
     return get(QUrl(url));
 }
 
-QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
+QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData)
 {
-    QUrlQuery postData;
-    foreach (QString key, params.keys()) {
-        postData.addQueryItem(key, params.value(key));
-    }
-
     request.setUrl(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader,
         "application/x-www-form-urlencoded");
-    reply = manager.post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+    reply = manager.post(request,
+                         postData.toString(QUrl::FullyEncoded).toUtf8());
     connect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
 
     waitForReply();
@@ -50,9 +46,9 @@ QString HttpRequest::post(const QUrl &url, const QMap<QString, QString> &params)
 }
 
 QString HttpRequest::post(const QString &url,
-                          const QMap<QString, QString> &params)
+                          const QUrlQuery &postData)
 {
-    return post(QUrl(url), params);
+    return post(QUrl(url), postData);
 }
 
 void HttpRequest::startGetRequest(const QUrl &url)
