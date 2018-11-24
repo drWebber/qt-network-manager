@@ -13,11 +13,11 @@ void Test::testGetRequest()
     QString response =
             req.get(QUrl("https://drwebber-dev.000webhostapp.com/index.php"));
 
-    if (!response.isEmpty() && response.contains("Info about client")) {
+    if (!response.isEmpty() && response.contains("Client's info")) {
         qDebug() << "testGetrequest() completed successfully";
     } else {
         qDebug() << "testGetrequest() failed: respose.isEmpty "
-                    "or response not contains \"Info about client\"";
+                    "or response not contains \"Client's info\"";
     }
 }
 

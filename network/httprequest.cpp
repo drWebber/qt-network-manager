@@ -53,10 +53,6 @@ QString HttpRequest::post(const QString &url,
 
 QList<QNetworkCookie> HttpRequest::getCookies()
 {
-//    QVariant cookieVar = reply->header(QNetworkRequest::CookieHeader);
-//    if (cookieVar.isValid()) {
-//        cookies = cookieVar.value<QList<QNetworkCookie>>();
-//    }
     return cookies;
 }
 

@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("drwebber's soft");
-    QCoreApplication::setApplicationName("website-manager");
+    QCoreApplication::setApplicationName("network");
 
     QApplication a(argc, argv);
     MainWindow w;
