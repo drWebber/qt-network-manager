@@ -2,6 +2,7 @@
 
 #include <QUrlQuery>
 #include <qeventloop.h>
+#include <qtextcodec.h>
 
 HttpRequest::HttpRequest()
 {
@@ -31,13 +32,31 @@ QString HttpRequest::get(const QString &url)
     return get(QUrl(url));
 }
 
-QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData)
+QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData,
+                          const QByteArray &encoding)
 {
     request.setUrl(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader,
         "application/x-www-form-urlencoded");
-    reply = manager.post(request,
-                         postData.toString(QUrl::FullyEncoded).toUtf8());
+
+    QByteArray data;
+    if (encoding.contains("UTF-8")) {
+        data = postData.toString(QUrl::FullyEncoded).toUtf8();
+    } else {
+        QString body;
+        QTextCodec *codec = QTextCodec::codecForName(encoding);
+        QList<QPair<QString, QString>> pairs = postData.queryItems();
+        for (int i = 0; i < pairs.size(); i++) {
+            QPair<QString, QString> pair = pairs[i];
+            body += pair.first + "=" +
+                    codec->fromUnicode(pair.second).toPercentEncoding() + "&";
+        }
+        body.chop(1);
+        body.replace("%250A", "\n"); //добавляет переносы строк \n
+        data = body.toLocal8Bit();
+    }
+
+    reply = manager.post(request, data);
     connect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
 
     waitForReply();
@@ -45,10 +64,10 @@ QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData)
     return response;
 }
 
-QString HttpRequest::post(const QString &url,
-                          const QUrlQuery &postData)
+QString HttpRequest::post(const QString &url, const QUrlQuery &postData,
+                          const QByteArray &encoding)
 {
-    return post(QUrl(url), postData);
+    return post(QUrl(url), postData, encoding);
 }
 
 QList<QNetworkCookie> HttpRequest::getCookies()

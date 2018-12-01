@@ -35,8 +35,10 @@ public:
     QString get(const QUrl &url);
     QString get(const QString &url);
 
-    QString post(const QUrl &url, const QUrlQuery &postData);
-    QString post(const QString &url, const QUrlQuery &postData);
+    QString post(const QUrl &url, const QUrlQuery &postData,
+                 const QByteArray &encoding = "UTF-8");
+    QString post(const QString &url, const QUrlQuery &postData,
+                 const QByteArray &encoding = "UTF-8");
 
     QList<QNetworkCookie> getCookies();
     void setCookies(QNetworkCookieJar *jar);
