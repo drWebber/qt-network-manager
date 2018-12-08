@@ -17,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     HttpRequest req;
     QUrlQuery postData;
-    postData.addQueryItem("name", "Vasya");
-    postData.addQueryItem("email", "ass@hole.com");
+    postData.addQueryItem("name", "John");
+    postData.addQueryItem("email", "j.doe@gmail.com");
 
     QString response = req.post(
                 QUrl("https://drwebber-dev.000webhostapp.com/index.php"),

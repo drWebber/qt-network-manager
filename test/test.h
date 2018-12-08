@@ -11,7 +11,6 @@ private:
      CookieJar jar;
 
 public:
-    Test();
 
     void testGetRequest();
     void testPostRequest();

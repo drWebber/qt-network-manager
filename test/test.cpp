@@ -3,11 +3,6 @@
 #include <qdebug.h>
 #include <qurlquery.h>
 
-Test::Test()
-{
-
-}
-
 void Test::testGetRequest()
 {
     QString response =
@@ -24,22 +19,22 @@ void Test::testGetRequest()
 void Test::testPostRequest()
 {
     QMap<QString, QString> params;
-    params.insert("name", "Vasya");
-    params.insert("email", "ass@hole.com");
+    params.insert("name", "John");
+    params.insert("email", "j.doe@gmail.com");
 
     QUrlQuery postData;
-    postData.addQueryItem("name", "Vasya");
-    postData.addQueryItem("email", "ass@hole.com");
+    postData.addQueryItem("name", "John");
+    postData.addQueryItem("email", "j.doe@gmail.com");
     QString response = req.post(
         QUrl("https://drwebber-dev.000webhostapp.com/index.php"),
         postData
     );
 
-    if (!response.isEmpty() && response.contains("Welcome Vasya")) {
+    if (!response.isEmpty() && response.contains("Welcome John")) {
         qDebug() << "testPostrequest() completed successfully";
     } else {
         qDebug() << "testPostrequest() failed: respose.isEmpty "
-                    "or response not contains \"Welcome Vasya\"";
+                    "or response not contains \"Welcome John\"";
     }
 
 }
