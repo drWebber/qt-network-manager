@@ -16,14 +16,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     HttpRequest req;
-    QUrlQuery postData;
-    postData.addQueryItem("name", "John");
-    postData.addQueryItem("email", "j.doe@gmail.com");
 
-    QString response = req.post(
-                QUrl("https://drwebber-dev.000webhostapp.com/index.php"),
-                postData
-    );
+    QUrlQuery urlQuery("https://drwebber-dev.000webhostapp.com/index.php");
+    urlQuery.addQueryItem("name", "John");
+    urlQuery.addQueryItem("email", "j.doe@gmail.com");
+    QString response = req.post(urlQuery, "");
 
     qDebug() << "req.getCookies()" << req.getCookies();
 
@@ -34,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     QUrl("https://drwebber-dev.000webhostapp.com"));
 
     req.setCookies(&jar);
+    req.setStandardBrowserHeaders();
     response = req.get("https://drwebber-dev.000webhostapp.com/index.php");
     ui->textBrowser->setText(response);
 

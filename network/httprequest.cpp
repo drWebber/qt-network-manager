@@ -4,7 +4,12 @@
 #include <qeventloop.h>
 #include <qtextcodec.h>
 
-HttpRequest::HttpRequest()
+HttpRequest::HttpRequest(const QByteArray &encoding)
+{
+    this->encoding = encoding;
+}
+
+void HttpRequest::setStandardBrowserHeaders()
 {
     request.setRawHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
     // Сжатие включать не нужно, запрос сам придет на сервер как gzip, deflate
@@ -32,27 +37,25 @@ QString HttpRequest::get(const QString &url)
     return get(QUrl(url));
 }
 
-QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData,
-                          const QByteArray &encoding)
+QString HttpRequest::get(const QUrlQuery &urlQuery)
 {
-    request.setUrl(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader,
-        "application/x-www-form-urlencoded");
+    return get(urlQuery.toString());
+}
+
+QString HttpRequest::post(const QUrlQuery &urlQuery, const QMap<QString, QString> headers,
+                          const QString body)
+{
+    request.setUrl(urlQuery.toString());
+
+    QMap<QString, QString>::const_iterator it;
+    for (it = headers.begin(); it != headers.end(); ++it) {
+        request.setRawHeader(it.key().toUtf8(), it.value().toUtf8());
+    }
 
     QByteArray data;
     if (encoding.contains("UTF-8")) {
-        data = postData.toString(QUrl::FullyEncoded).toUtf8();
+        data = body.toUtf8();
     } else {
-        QString body;
-        QTextCodec *codec = QTextCodec::codecForName(encoding);
-        QList<QPair<QString, QString>> pairs = postData.queryItems();
-        for (int i = 0; i < pairs.size(); i++) {
-            QPair<QString, QString> pair = pairs[i];
-            body += pair.first + "=" +
-                    codec->fromUnicode(pair.second).toPercentEncoding() + "&";
-        }
-        body.chop(1);
-        body.replace("%250A", "\n"); //добавляет переносы строк \n
         data = body.toLocal8Bit();
     }
 
@@ -64,10 +67,15 @@ QString HttpRequest::post(const QUrl &url, const QUrlQuery &postData,
     return response;
 }
 
-QString HttpRequest::post(const QString &url, const QUrlQuery &postData,
-                          const QByteArray &encoding)
+QString HttpRequest::post(const QUrlQuery &urlQuery, QPair<QString, QString> header,
+                          const QString body)
 {
-    return post(QUrl(url), postData, encoding);
+    return post(urlQuery, QMap<QString, QString>{{header.first, header.second}}, body);
+}
+
+QString HttpRequest::post(const QUrlQuery &urlQuery, const QString body)
+{
+    return post(urlQuery, QMap<QString, QString>(), body);
 }
 
 QList<QNetworkCookie> HttpRequest::getCookies()
@@ -105,7 +113,7 @@ void HttpRequest::waitForReply()
 void HttpRequest::httpFinished()
 {
     if (reply->error()) {
-        qDebug() << "reply error";        
+        qWarning() << "reply error:" << reply->errorString();
         emit replyFinished();
         return;
     }
@@ -129,7 +137,7 @@ void HttpRequest::httpFinished()
     }
 
     if (!redirectionTarget.isNull()) {
-        qDebug() << "redirecting";
+        qDebug() << "redirecting to" << redirectionTarget.toUrl();
         const QUrl redirectedUrl = url.resolved(redirectionTarget.toUrl());
         startGetRequest(redirectedUrl);
         return;

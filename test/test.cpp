@@ -22,13 +22,10 @@ void Test::testPostRequest()
     params.insert("name", "John");
     params.insert("email", "j.doe@gmail.com");
 
-    QUrlQuery postData;
+    QUrlQuery postData("https://drwebber-dev.000webhostapp.com/index.php");
     postData.addQueryItem("name", "John");
     postData.addQueryItem("email", "j.doe@gmail.com");
-    QString response = req.post(
-        QUrl("https://drwebber-dev.000webhostapp.com/index.php"),
-        postData
-    );
+    QString response = req.post(postData, "");
 
     if (!response.isEmpty() && response.contains("Welcome John")) {
         qDebug() << "testPostrequest() completed successfully";

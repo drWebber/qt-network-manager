@@ -17,6 +17,7 @@ private:
     QString response;
     QByteArray byteResponse;
     QList<QNetworkCookie> cookies;
+    QByteArray encoding;
 
 private:
     void waitForReply();
@@ -29,16 +30,20 @@ signals:
     void replyFinished();
 
 public:
-    HttpRequest();
+    HttpRequest(const QByteArray &encoding = "UTF-8");
     ~HttpRequest() { }
+
+    void setStandardBrowserHeaders();
 
     QString get(const QUrl &url);
     QString get(const QString &url);
+    QString get(const QUrlQuery &urlQuery);
 
-    QString post(const QUrl &url, const QUrlQuery &postData,
-                 const QByteArray &encoding = "UTF-8");
-    QString post(const QString &url, const QUrlQuery &postData,
-                 const QByteArray &encoding = "UTF-8");
+    QString post(const QUrlQuery &urlQuery, const QMap<QString, QString> headers,
+                 const QString body);
+    QString post(const QUrlQuery &urlQuery, const QPair<QString, QString> header,
+                 const QString body);
+    QString post(const QUrlQuery &urlQuery, const QString body);
 
     QList<QNetworkCookie> getCookies();
     void setCookies(QNetworkCookieJar *jar);
