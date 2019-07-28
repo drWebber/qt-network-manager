@@ -32,8 +32,9 @@ void HttpRequest::httpFinished()
 
     if (!redirectionTarget.isNull()) {
         qDebug() << "Redirecting to:" << redirectionTarget.toUrl();
-        get(redirectionTarget.toUrl().toString());
-        return;
+        redirectionUrl = redirectionTarget.toUrl().toString();
+    } else {
+        redirectionUrl = "";
     }
 
     emit replyFinished();
@@ -43,10 +44,11 @@ QString HttpRequest::readResponse() const
 {
     QString response = "";
 
+    QByteArray result = reply->readAll();
     if (reply->rawHeader("Content-Type").contains("windows-1251")) {
-        response = QString::fromLocal8Bit(reply->readAll());
+        response = QString::fromLocal8Bit(result);
     } else {
-        response = QString(reply->readAll());
+        response = QString(result);
     }
 
     return response;
@@ -94,5 +96,10 @@ QString HttpRequest::doRequest(Type type, const QString url, const QUrlQuery par
 
     disconnect(this,  SIGNAL(replyFinished()), &loop, SLOT(quit()));
     disconnect(reply, &QNetworkReply::finished, this, &HttpRequest::httpFinished);
+
+    if (!redirectionUrl.isEmpty()) {
+        return get(redirectionUrl);
+    }
+
     return readResponse();
 }

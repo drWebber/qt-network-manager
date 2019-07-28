@@ -27,6 +27,7 @@ private:
     QNetworkAccessManager manager;
     QNetworkReply *reply;
     Encoding encoding;
+    QString redirectionUrl;
 
     QString readResponse() const;
     QString doRequest(Type type, const QString url, const QUrlQuery params,

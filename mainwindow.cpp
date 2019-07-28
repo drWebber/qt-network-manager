@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     HttpRequest req;
+    QString result = req.get("https://google.by");
+    qDebug() << "result.size:" << result.size();
+    ui->textBrowser->setText(result);
+
     QUrlQuery params;
     params.addQueryItem("userId", "1");
     QString response = req.get("https://jsonplaceholder.typicode.com/posts", params);
