@@ -71,6 +71,11 @@ QString HttpRequest::doRequest(Type type, const QString url, const QUrlQuery par
         // post request
         request.setUrl(url);
 
+        if (headers.isEmpty()) {
+            request.setHeader(QNetworkRequest::ContentTypeHeader,
+                              "application/x-www-form-urlencoded");
+        }
+
         QByteArray body;
         if (encoding == Encoding::UTF_8) {
             body = params.toString().toUtf8();
