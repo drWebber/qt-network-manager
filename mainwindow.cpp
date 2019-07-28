@@ -1,13 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <network/cookiejar.h>
-#include <network/httprequest.h>
 #include <qnetworkcookie.h>
-#include <test/test.h>
 
 #include <qdebug.h>
 #include <qurlquery.h>
+
+#include <network/httprequest.h>
+#include <QMultiMap>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,29 +16,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     HttpRequest req;
+    QUrlQuery params;
+    params.addQueryItem("userId", "1");
+    QString response = req.get("https://jsonplaceholder.typicode.com/posts", params);
+    qDebug() << "GET response:" << response;
 
-    QUrlQuery urlQuery("https://drwebber-dev.000webhostapp.com/index.php");
-    urlQuery.addQueryItem("name", "John");
-    urlQuery.addQueryItem("email", "j.doe@gmail.com");
-    QString response = req.post(urlQuery, "");
+    QUrlQuery body;
+    body.addQueryItem("name", "John");
+    body.addQueryItem("surname", "Doe");
 
-    qDebug() << "req.getCookies()" << req.getCookies();
+    response = req.post("https://jsonplaceholder.typicode.com/posts", body);
 
-    CookieJar jar(this);
-    qDebug() << jar.setCookiesFromUrl(req.getCookies(),
-                          QUrl("https://drwebber-dev.000webhostapp.com"));
-    qDebug() << jar.cookiesForUrl(
-                    QUrl("https://drwebber-dev.000webhostapp.com"));
-
-    req.setCookies(&jar);
-    req.setStandardBrowserHeaders();
-    response = req.get("https://drwebber-dev.000webhostapp.com/index.php");
     ui->textBrowser->setText(response);
-
-    Test test;
-    test.testGetRequest();
-    test.testPostRequest();
-    test.testCookiesJar();
 }
 
 MainWindow::~MainWindow()

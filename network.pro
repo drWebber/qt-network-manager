@@ -25,17 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
     network/httprequest.cpp \
-    test/test.cpp \
-    network/cookiejar.cpp
+    main.cpp \
+    mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
     network/httprequest.h \
-    test/test.h \
-    network/cookiejar.h
+    mainwindow.h
 
 FORMS += \
         mainwindow.ui
